@@ -1,0 +1,76 @@
+leader:
+  # GELLO 主手串口；用 ls /dev/serial/by-id/ 查看实际设备路径
+  port: "/dev/serial/by-id/YOUR_GELLO_DEVICE"
+  # Dynamixel 总线波特率
+  baudrate: 57600
+  # 手臂关节 Dynamixel 电机 ID，不含夹爪
+  joint_ids: [1, 2, 3, 4, 5, 6]
+  # 关节零点偏移；np.pi 表达式须加引号，标定后填入
+  joint_offsets:
+    - "1 * np.pi / 2"
+    - "3 * np.pi / 2"
+    - "2 * np.pi / 2"
+    - "2 * np.pi / 2"
+    - "2 * np.pi / 2"
+    - "2 * np.pi / 2"
+  # 关节方向，每个值只能是 1 或 -1
+  joint_signs: [1, 1, -1, 1, 1, 1]
+  gripper:
+    id: 7
+    # 夹爪开合位置（度），需运行 calibrate_offsets.py 标定
+    open_position: 199
+    close_position: 157
+    read_interval: 0.1
+
+follower:
+  # UR5 控制器 IP 地址
+  robot_ip: "192.168.1.100"
+  use_gripper: true
+  gripper_port: 63352
+  gripper_command_interval: 0.05
+  servo:
+    velocity: 0.5
+    acceleration: 0.5
+    dt: "1.0 / 500"
+    lookahead_time: 0.2
+    gain: 100
+
+startup:
+  max_start_delta: 0.2
+  alignment_steps: 100
+  alignment_hz: 100
+
+control:
+  hz: 30
+  max_joint_delta: 0.5
+
+diagnostics:
+  print_interval: 1.0
+
+lerobot:
+  joint_names:
+    - shoulder_pan.pos
+    - shoulder_lift.pos
+    - elbow_flex.pos
+    - wrist_1.pos
+    - wrist_2.pos
+    - wrist_3.pos
+    - gripper.pos
+  fps: 30
+  teleop_read_hz: 30
+  realsense:
+    enabled: true
+    cameras:
+      # 用 rs-enumerate-devices 或 lerobot-find-cameras 查看序列号
+      front:
+        serial_number: "YOUR_CAMERA_SERIAL"
+        width: 640
+        height: 480
+        fps: 30
+        color_format: rgb8
+      # wrist:
+      #   serial_number: "YOUR_WRIST_CAMERA_SERIAL"
+      #   width: 640
+      #   height: 480
+      #   fps: 30
+      #   color_format: rgb8

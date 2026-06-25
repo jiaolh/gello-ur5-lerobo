@@ -1,0 +1,25 @@
+# 本地硬件配置（含 IP、串口、相机序列号等，勿提交）
+config/ur5_gello.yaml
+
+# LeRobot 标定缓存
+.cache/
+
+# uv / Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+my_teleop.egg-info/
+dist/
+build/
+
+# 编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db

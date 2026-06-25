@@ -1,0 +1,38 @@
+[project]
+name = "my-teleop"
+version = "0.1.0"
+description = "GELLO + UR5 关节空间遥操作系统"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "omegaconf==2.3.0",
+    "dynamixel-sdk>=3.7.31",
+    "pyserial>=3.5",
+    "ur-rtde",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "my_teleop" = "." }
+
+packages = [
+    "my_teleop",
+    "my_teleop.teleop",
+    "my_teleop.teleop.core",
+    "my_teleop.teleop.follower",
+    "my_teleop.teleop.leader",
+    "my_teleop.teleop.safety",
+]
+
+[tool.uv]
+package = true
+
+# 仅作用于本项目的 IDE 类型检查，不影响其他仓库
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+# 仓库根目录即 my_teleop 包；配合 uv sync 后选用 .venv 解释器即可解析导入
+extraPaths = [".."]
