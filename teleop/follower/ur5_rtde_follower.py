@@ -15,7 +15,7 @@ class UR5RTDEFollower:
         use_gripper: bool = True,
         gripper_port: int = 63352,
         gripper_command_interval: float = 0.05,
-    ):
+    ) -> None:
         import rtde_control
         import rtde_receive
 
@@ -37,10 +37,7 @@ class UR5RTDEFollower:
             self.gripper = RobotiqGripper()
             self.gripper.connect(hostname=self.robot_ip, port=self.gripper_port)
 
-        # 读取机械臂当前状态。
         self.receive = rtde_receive.RTDEReceiveInterface(self.robot_ip)
-
-        # 发送机械臂目标状态。
         self.control = rtde_control.RTDEControlInterface(self.robot_ip)
 
     def read_arm(self) -> np.ndarray:
@@ -91,7 +88,11 @@ class UR5RTDEFollower:
         ):
             return
 
-        success, actual_command_position = self.gripper.move(command_position, 255, 10)
+        success, actual_command_position = self.gripper.move(
+            command_position,
+            255,
+            10,
+        )
         if success is False:
             raise RuntimeError("UR5 gripper move 执行失败，请检查机器人是否处于可远程控制状态")
 

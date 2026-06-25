@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
 from lerobot.robots import Robot
 from my_teleop.teleop.core.config_loader import (
@@ -14,38 +14,14 @@ from my_teleop.teleop.core.config_loader import (
     build_safety_checker,
     load_config,
 )
+from my_teleop.teleop.core.lerobot_helpers import (
+    lerobot_joint_names as _joint_names,
+    resolve_config_path as _resolve_config_path,
+    select_config as _select,
+)
 from my_teleop.teleop.core.startup_alignment import align_to_leader
 
 from .config_ur5_gello import UR5GelloRobotConfig
-
-DEFAULT_JOINT_NAMES = (
-    "shoulder_pan.pos",
-    "shoulder_lift.pos",
-    "elbow_flex.pos",
-    "wrist_1.pos",
-    "wrist_2.pos",
-    "wrist_3.pos",
-    "gripper.pos",
-)
-
-
-def _resolve_config_path(config_path: str | Path) -> Path:
-    path = Path(config_path).expanduser()
-    if path.is_absolute():
-        return path
-    return Path.cwd() / path
-
-
-def _select(cfg: DictConfig, key: str, default: Any = None) -> Any:
-    value = OmegaConf.select(cfg, key)
-    return default if value is None else value
-
-
-def _joint_names(cfg: DictConfig) -> tuple[str, ...]:
-    names = tuple(str(name) for name in _select(cfg, "lerobot.joint_names", DEFAULT_JOINT_NAMES))
-    if len(names) != 7:
-        raise ValueError(f"lerobot.joint_names 必须是 7 个名称，当前为 {len(names)} 个")
-    return names
 
 
 class _RealSenseColorCamera:
@@ -252,7 +228,10 @@ class UR5GelloRobot(Robot):
         if self._follower is None:
             raise ConnectionError("UR5GelloRobot 尚未连接")
 
-        target_state = np.array([float(action[name]) for name in self._names], dtype=float)
+        target_state = np.array(
+            [float(action[name]) for name in self._names],
+            dtype=float,
+        )
         target_joints = target_state[:6]
         gripper_position = float(np.clip(target_state[6], 0.0, 1.0))
 
@@ -288,7 +267,9 @@ class UR5GelloRobot(Robot):
             return self._last_gripper_position
 
         try:
-            self._last_gripper_position = float(np.clip(gripper.get_current_position() / 255.0, 0.0, 1.0))
+            self._last_gripper_position = float(
+                np.clip(gripper.get_current_position() / 255.0, 0.0, 1.0)
+            )
             self._last_gripper_read_time = now
             return self._last_gripper_position
         except Exception as exc:

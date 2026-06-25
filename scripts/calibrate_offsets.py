@@ -1,17 +1,23 @@
 import argparse
 import time
+from pathlib import Path
 
 import numpy as np
 
 from my_teleop.teleop.core.config_loader import (
-    load_config,
-    build_leader,
     build_follower,
+    build_leader,
+    load_config,
 )
+from my_teleop.teleop.follower.ur5_rtde_follower import UR5RTDEFollower
+from my_teleop.teleop.leader.gello_leader import GelloLeader
 
 # 与 gello_get_offset.py 一致：夹爪完全打开时读一次，再减去固定偏移。
 GRIPPER_OPEN_OFFSET_DEG = 0.2
 GRIPPER_CLOSE_OFFSET_DEG = 42.0
+DEFAULT_CONFIG_PATH = (
+    Path(__file__).resolve().parents[1] / "config" / "ur5_gello.yaml"
+)
 
 
 def compute_offsets(
@@ -27,7 +33,7 @@ def snap_to_half_pi(offsets: np.ndarray) -> np.ndarray:
     return np.round(offsets / (np.pi / 2)) * (np.pi / 2)
 
 
-def calibrate_gello_gripper(leader) -> None:
+def calibrate_gello_gripper(leader: GelloLeader) -> None:
     present_deg = float(np.rad2deg(leader.read_raw()[-1]))
     open_deg = present_deg - GRIPPER_OPEN_OFFSET_DEG
     close_deg = present_deg - GRIPPER_CLOSE_OFFSET_DEG
@@ -36,7 +42,7 @@ def calibrate_gello_gripper(leader) -> None:
     print(f"gripper close_position: {close_deg:.2f}")
 
 
-def calibrate_ur5_gripper(follower) -> None:
+def calibrate_ur5_gripper(follower: UR5RTDEFollower) -> None:
     if not follower.use_gripper:
         return
 
@@ -50,7 +56,7 @@ def calibrate_ur5_gripper(follower) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="my_teleop/config/ur5_gello.yaml")
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
     args = parser.parse_args()
     cfg = load_config(args.config)
 

@@ -1,6 +1,6 @@
 import sys
 import time
-from typing import Any, List, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -11,7 +11,7 @@ class _LiveBlockDisplay:
     def __init__(self) -> None:
         self._line_count = 0
 
-    def update(self, lines: List[str]) -> None:
+    def update(self, lines: list[str]) -> None:
         if self._line_count > 0:
             sys.stdout.write(f"\033[{self._line_count}F")
         for line in lines:
@@ -34,7 +34,7 @@ class _LiveBlockDisplay:
 def _read_pose_delta(
     leader: Any,
     follower: Any,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     leader_state = leader.read()
     target_joints = leader_state[: follower.num_arm_joints()]
     current_joints = follower.read_arm()
@@ -48,7 +48,7 @@ def _format_wait_table(
     abs_delta: np.ndarray,
     max_delta: float,
     max_start_delta: float,
-) -> List[str]:
+) -> list[str]:
     ready = max_delta <= max_start_delta
     status = "已就绪" if ready else "未就绪，请调整姿态"
     lines = [

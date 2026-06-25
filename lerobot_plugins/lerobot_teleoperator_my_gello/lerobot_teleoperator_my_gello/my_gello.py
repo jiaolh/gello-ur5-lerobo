@@ -6,41 +6,17 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
 from lerobot.teleoperators.teleoperator import Teleoperator
 from my_teleop.teleop.core.config_loader import build_leader, load_config
-
-from .config_my_gello import MyGelloTeleoperatorConfig
-
-DEFAULT_JOINT_NAMES = (
-    "shoulder_pan.pos",
-    "shoulder_lift.pos",
-    "elbow_flex.pos",
-    "wrist_1.pos",
-    "wrist_2.pos",
-    "wrist_3.pos",
-    "gripper.pos",
+from my_teleop.teleop.core.lerobot_helpers import (
+    lerobot_joint_names as _joint_names,
+    resolve_config_path as _resolve_config_path,
+    select_config as _select,
 )
 
-
-def _resolve_config_path(config_path: str | Path) -> Path:
-    path = Path(config_path).expanduser()
-    if path.is_absolute():
-        return path
-    return Path.cwd() / path
-
-
-def _select(cfg: DictConfig, key: str, default: Any = None) -> Any:
-    value = OmegaConf.select(cfg, key)
-    return default if value is None else value
-
-
-def _joint_names(cfg: DictConfig) -> tuple[str, ...]:
-    names = tuple(str(name) for name in _select(cfg, "lerobot.joint_names", DEFAULT_JOINT_NAMES))
-    if len(names) != 7:
-        raise ValueError(f"lerobot.joint_names 必须是 7 个名称，当前为 {len(names)} 个")
-    return names
+from .config_my_gello import MyGelloTeleoperatorConfig
 
 
 class MyGelloTeleoperator(Teleoperator):
@@ -98,7 +74,9 @@ class MyGelloTeleoperator(Teleoperator):
         if self.is_connected:
             return
         cfg = self._load_cfg()
-        self._read_period = 1.0 / float(_select(cfg, "lerobot.teleop_read_hz", _select(cfg, "control.hz", 30)))
+        self._read_period = 1.0 / float(
+            _select(cfg, "lerobot.teleop_read_hz", _select(cfg, "control.hz", 30))
+        )
         self._leader = build_leader(cfg)
         self._latest_action = self._read_leader_action()
         self._reader_stop.clear()

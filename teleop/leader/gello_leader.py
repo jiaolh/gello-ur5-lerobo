@@ -1,6 +1,6 @@
 import time
 from dataclasses import dataclass
-from typing import Sequence, Tuple
+from typing import Sequence
 
 import numpy as np
 
@@ -15,19 +15,18 @@ DEFAULT_UR_GELLO_PORT = "/dev/serial/by-id/YOUR_GELLO_DEVICE"
 
 @dataclass
 class GelloLeaderConfig:
-
     port: str = DEFAULT_UR_GELLO_PORT
     joint_ids: Sequence[int] = (1, 2, 3, 4, 5, 6)
     joint_offsets: Sequence[float] = (
         1 * np.pi / 2,
         3 * np.pi / 2,
-        2 * np.pi / 2,
-        2 * np.pi / 2,
-        2 * np.pi / 2,
-        2 * np.pi / 2,
+        np.pi,
+        np.pi,
+        np.pi,
+        np.pi,
     )
     joint_signs: Sequence[int] = (1, 1, -1, 1, 1, 1)
-    gripper_config: Tuple[int, float, float] = (7, 199, 157)
+    gripper_config: tuple[int, float, float] = (7, 199, 157)
     baudrate: int = DEFAULT_BAUDRATE
     gripper_read_interval: float = 0.1
 
@@ -41,7 +40,7 @@ class GelloLeaderConfig:
 class GelloLeader:
     """将 Dynamixel 原始角度解释成遥操作可用的 GELLO 状态。"""
 
-    def __init__(self, config: GelloLeaderConfig):
+    def __init__(self, config: GelloLeaderConfig) -> None:
         self.config = config
         gripper_id = config.gripper_config[0]
         driver_ids = tuple(config.joint_ids) + (gripper_id,)

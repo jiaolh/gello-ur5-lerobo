@@ -1,5 +1,5 @@
 import time
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
@@ -38,7 +38,7 @@ class TeleopLoop:
         self._last_diagnostics_time = time.perf_counter()
         self._loop_count = 0
 
-    def run_once(self) -> Dict[str, Any]:
+    def run_once(self) -> dict[str, Any]:
         leader_state = self.leader.read()
         target_joints = leader_state[: self.follower.num_arm_joints()]
 

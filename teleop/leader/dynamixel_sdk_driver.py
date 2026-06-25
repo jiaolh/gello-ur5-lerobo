@@ -125,7 +125,10 @@ class DynamixelSDKDriver:
         if comm_result != COMM_SUCCESS:
             if all(dxl_id in self._last_positions_by_id for dxl_id in read_ids):
                 print(f"warning: Dynamixel 同步读取失败，使用上一帧数据: {comm_result}")
-                return np.array([self._last_positions_by_id[dxl_id] for dxl_id in read_ids], dtype=float)
+                return np.array(
+                    [self._last_positions_by_id[dxl_id] for dxl_id in read_ids],
+                    dtype=float,
+                )
             raise RuntimeError(f"Dynamixel 同步读取失败: comm_result={comm_result}")
 
         positions = []
