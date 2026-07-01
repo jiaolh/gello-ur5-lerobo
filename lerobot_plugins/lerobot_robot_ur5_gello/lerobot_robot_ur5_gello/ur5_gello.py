@@ -273,7 +273,7 @@ class UR5GelloRobot(Robot):
             self._last_gripper_read_time = now
             return self._last_gripper_position
         except Exception as exc:
-            print(f"warning: 读取夹爪位置失败，使用上一次命令值: {exc}")
+            print(f"警告: 读取夹爪位置失败，使用上一次命令值: {exc}")
             return self._last_gripper_position
 
     def _camera_configs(self) -> dict[str, _RealSenseColorCamera]:

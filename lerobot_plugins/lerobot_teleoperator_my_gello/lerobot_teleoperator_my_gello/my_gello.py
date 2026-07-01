@@ -27,6 +27,7 @@ class MyGelloTeleoperator(Teleoperator):
         super().__init__(config)
         self.config = config
         self._cfg: DictConfig | None = None
+        self._names_cache: tuple[str, ...] | None = None
         self._leader: Any | None = None
         self._latest_action: dict[str, float] | None = None
         self._action_lock = threading.Lock()
@@ -46,7 +47,9 @@ class MyGelloTeleoperator(Teleoperator):
 
     @property
     def _names(self) -> tuple[str, ...]:
-        return _joint_names(self._load_cfg())
+        if self._names_cache is None:
+            self._names_cache = _joint_names(self._load_cfg())
+        return self._names_cache
 
     @property
     def action_features(self) -> dict[str, type]:
@@ -132,7 +135,7 @@ class MyGelloTeleoperator(Teleoperator):
                 self._reader_error = None
             except Exception as exc:
                 self._reader_error = exc
-                print(f"warning: GELLO 后台读取失败，继续使用上一帧动作: {exc}")
+                print(f"警告: GELLO 后台读取失败，继续使用上一帧动作: {exc}")
 
             elapsed = time.perf_counter() - loop_start
             time.sleep(max(0.0, self._read_period - elapsed))

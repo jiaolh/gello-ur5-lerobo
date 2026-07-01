@@ -43,7 +43,7 @@ class UR5RTDEFollower:
     def read_arm(self) -> np.ndarray:
         joints = self.receive.getActualQ()
         if len(joints) != 6:
-            raise ValueError(f"Expected 6 joints, got {len(joints)}")
+            raise ValueError(f"期望读取 6 个关节，实际读取 {len(joints)} 个")
         return np.array(joints)
 
     def num_arm_joints(self) -> int:
@@ -52,7 +52,7 @@ class UR5RTDEFollower:
     def command_arm(self, joints: np.ndarray) -> None:
         joints = np.asarray(joints, dtype=float)
         if joints.shape != (6,):
-            raise ValueError(f"Expected joints shape (6,), got {joints.shape}")
+            raise ValueError(f"关节数组形状应为 (6,)，实际为 {joints.shape}")
 
         t_start = self.control.initPeriod()
         success = self.control.servoJ(
@@ -103,7 +103,7 @@ class UR5RTDEFollower:
         try:
             self.control.servoStop()
         except Exception as exc:
-            print(f"warning: UR5 servoStop 失败: {exc}")
+            print(f"警告: UR5 servoStop 失败: {exc}")
 
     def close(self) -> None:
         self.stop()
@@ -111,3 +111,9 @@ class UR5RTDEFollower:
             self.control.disconnect()
         if hasattr(self.receive, "disconnect"):
             self.receive.disconnect()
+        # 夹爪 socket 需要主动关闭，避免遗留连接句柄。
+        if self.use_gripper and hasattr(self, "gripper"):
+            try:
+                self.gripper.disconnect()
+            except Exception as exc:
+                print(f"警告: Robotiq 夹爪断开失败: {exc}")

@@ -116,7 +116,7 @@ cp config/ur5_gello.example.yaml config/ur5_gello.yaml
 首次使用或更换 GELLO / UR5 姿态关系后，建议先标定关节偏移。
 
 1. 修改 `config/ur5_gello.yaml` 中的串口、UR5 IP 和夹爪配置。
-2. 将 GELLO 和 UR5 摆成尽量相同的姿态。
+2. 将 GELLO 和 UR5 摆成尽量相同的姿态，建议将UR5的关节角设置为[0, -90, 90, -90, -90, 0]，单位为度。
 3. 保持 GELLO 夹爪完全打开。
 4. 运行：
 

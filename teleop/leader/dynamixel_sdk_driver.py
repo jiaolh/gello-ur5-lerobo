@@ -72,11 +72,11 @@ class DynamixelSDKDriver:
             print(f"Dynamixel 串口 latency_timer 已设置为 {USB_LOW_LATENCY_TIMER_MS} ms")
         except PermissionError:
             print(
-                "warning: 无权限设置 Dynamixel 串口 latency_timer；"
+                "警告: 无权限设置 Dynamixel 串口 latency_timer；"
                 f"可手动执行: echo {USB_LOW_LATENCY_TIMER_MS} | sudo tee {latency_path}"
             )
         except Exception as exc:
-            print(f"warning: 设置 Dynamixel 串口 latency_timer 失败: {exc}")
+            print(f"警告: 设置 Dynamixel 串口 latency_timer 失败: {exc}")
 
     def _get_sync_reader(self, ids: Sequence[int]) -> GroupSyncRead:
         """按 ID 组合缓存同步读取器，避免每次重建参数列表。"""
@@ -124,7 +124,7 @@ class DynamixelSDKDriver:
 
         if comm_result != COMM_SUCCESS:
             if all(dxl_id in self._last_positions_by_id for dxl_id in read_ids):
-                print(f"warning: Dynamixel 同步读取失败，使用上一帧数据: {comm_result}")
+                print(f"警告: Dynamixel 同步读取失败，使用上一帧数据: {comm_result}")
                 return np.array(
                     [self._last_positions_by_id[dxl_id] for dxl_id in read_ids],
                     dtype=float,
@@ -149,8 +149,7 @@ class DynamixelSDKDriver:
             self._last_positions_by_id[dxl_id] = position
             positions.append(position)
 
-        result = np.array(positions, dtype=float)
-        return result.copy()
+        return np.array(positions, dtype=float)
 
     def close(self) -> None:
         """关闭串口连接。"""

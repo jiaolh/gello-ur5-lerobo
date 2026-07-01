@@ -11,11 +11,11 @@ class SafetyChecker:
 
         if current_joints.shape != (6,):
             raise ValueError(
-                f"Expected current_joints shape (6,), got {current_joints.shape}"
+                f"current_joints 形状应为 (6,)，实际为 {current_joints.shape}"
             )
         if target_joints.shape != (6,):
             raise ValueError(
-                f"Expected target_joints shape (6,), got {target_joints.shape}"
+                f"target_joints 形状应为 (6,)，实际为 {target_joints.shape}"
             )
 
         delta = target_joints - current_joints
