@@ -7,7 +7,7 @@
 建议使用项目自带的 Python 3.11 虚拟环境。LeRobot 和 RealSense 的 Python 包通常不建议使用 Python 3.13。
 
 ```bash
-cd /home/birlab/my_teleop
+cd gello-ur5-lerobot
 source .venv/bin/activate
 python --version
 ```
