@@ -56,7 +56,7 @@ GELLO + UR5 关节空间遥操作项目，同时支持直接遥操作和采集 L
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/my_teleop.git
-cd my_teleop
+cd gello-ur5-lerobot
 uv venv --python 3.11
 source .venv/bin/activate
 uv pip install -e .
